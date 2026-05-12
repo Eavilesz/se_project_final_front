@@ -1,18 +1,16 @@
-# NewsExplorer
+# React + Vite
 
-This is the Final Project that I worked on during my Software Engineer project.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Description
+Currently, two official plugins are available:
 
-My project is an API Application that describes several topics on news reports throughtout the application. 
-You could sign in and sign out in order to get news that are reccomended to you or chose which ones you and like or dislike.
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-## Tech Stack
+## React Compiler
 
-- HTML
-- CSS
-- Responsive Design
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-# Record pitch project:
+## Expanding the ESLint configuration
 
-This is my project Pitch video describing the project and showing a 4-5 minute Brochure. 
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
