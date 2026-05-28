@@ -13,6 +13,7 @@
   font-size: 16px;
   flex: 1;
   min-width: 0;
+  width: 608px;
   height: 64px;
   padding: 0 32px 0 18px;
   border: 1px solid rgba(209, 210, 214, 1);
@@ -42,7 +43,8 @@
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.35);
   cursor: pointer;
-  margin-left: 0;
+  position: fixed;
+  margin-left: 440px;
 }
 
 .search-error {
