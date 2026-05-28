@@ -12,3 +12,5 @@ This project is Deployed on Github Pages
 
 ## Record Pitch video
 A video is included in this project to give a general idea about this repository. 
+
+Recording Of Final project: https://drive.google.com/drive/folders/1-CiGehVemmV3s1aisU4gbl6MzLPHpLpz
