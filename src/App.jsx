@@ -1,121 +1,149 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import Header from './components/Header.jsx'
+import Footer from './components/Footer.jsx'
+import HomePage from './pages/Home.jsx'
+import SavedNewsPage from './pages/SavedNews.jsx'
+import { newsApiBaseUrl, NEWS_API_KEY } from './utils/constants.js'
+
+function formatDate(date) {
+  return date.toISOString().slice(0, 10)
+}
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [articles, setArticles] = useState([])
+  const [visibleCount, setVisibleCount] = useState(3)
+  const [isLoading, setIsLoading] = useState(false)
+  const [searchError, setSearchError] = useState("")
+  const [searchExecuted, setSearchExecuted] = useState(false)
+  const [searchTerm, setSearchTerm] = useState("")
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [savedArticles, setSavedArticles] = useState([])
+
+  useEffect(() => {
+    setIsLoggedIn(Boolean(localStorage.getItem('authToken')))
+    const saved = window.localStorage.getItem('savedArticles')
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved)
+        if (Array.isArray(parsed)) {
+          setSavedArticles(parsed)
+        }
+      } catch (error) {
+        console.error('Failed to parse saved articles', error)
+      }
+    }
+  }, [])
+
+  const handleAuthChange = (loggedIn) => {
+    setIsLoggedIn(loggedIn)
+  }
+
+  const handleSearch = async (query) => {
+    if (!NEWS_API_KEY) {
+      setSearchError(
+        "Sorry, something went wrong during the request. Please try again later."
+      )
+      setArticles([])
+      setSearchExecuted(true)
+      return
+    }
+
+    setSearchError("")
+    setSearchExecuted(true)
+    setIsLoading(true)
+    setSearchTerm(query)
+    setVisibleCount(3)
+    setArticles([])
+
+    const toDate = new Date()
+    const fromDate = new Date(toDate)
+    fromDate.setDate(fromDate.getDate() - 7)
+
+    const url = `${newsApiBaseUrl}?q=${encodeURIComponent(
+      query
+    )}&apiKey=${encodeURIComponent(
+      NEWS_API_KEY
+    )}&from=${formatDate(fromDate)}&to=${formatDate(toDate)}&pageSize=100`
+
+    try {
+      const response = await fetch(url)
+      const data = await response.json()
+
+      if (!response.ok || !Array.isArray(data.articles)) {
+        throw new Error(data?.message || "Unexpected response from News API")
+      }
+
+      setArticles(data.articles)
+    } catch (error) {
+      console.error(error)
+      setSearchError(
+        "Sorry, something went wrong during the request. Please try again later."
+      )
+      setArticles([])
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleShowMore = () =>
+    setVisibleCount((current) => Math.min(current + 3, articles.length))
+
+  const handleToggleSave = (article) => {
+    if (!isLoggedIn) return
+
+    setSavedArticles((current) => {
+      const isAlreadySaved = current.some((saved) => saved.url === article.url)
+      const next = isAlreadySaved
+        ? current.filter((saved) => saved.url !== article.url)
+        : [...current, article]
+
+      window.localStorage.setItem('savedArticles', JSON.stringify(next))
+      return next
+    })
+  }
+
+  const savedArticleUrls = savedArticles.map((saved) => saved.url)
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+    <BrowserRouter>
+      <div className="app-shell">
+        <Header onAuthChange={handleAuthChange} isLoggedIn={isLoggedIn} />
+        <main className="app-content">
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <HomePage
+                  onSearch={handleSearch}
+                  articles={articles}
+                  visibleCount={visibleCount}
+                  onShowMore={handleShowMore}
+                  isLoading={isLoading}
+                  searchExecuted={searchExecuted}
+                  searchError={searchError}
+                  searchTerm={searchTerm}
+                  onToggleSave={handleToggleSave}
+                  savedArticleUrls={savedArticleUrls}
+                  isLoggedIn={isLoggedIn}
+                />
+              }
+            />
+            <Route
+              path="/saved-news"
+              element={
+                <SavedNewsPage
+                  savedArticles={savedArticles}
+                  isLoggedIn={isLoggedIn}
+                  onToggleSave={handleToggleSave}
+                />
+              }
+            />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </BrowserRouter>
   )
 }
 
