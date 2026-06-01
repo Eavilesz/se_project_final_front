@@ -103,3 +103,64 @@
 .below-content-image:hover {
   cursor: pointer;
 }
+
+@media (max-width: 375px) {
+  .hero-overlay {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 8vh;
+    width: min(100%, 320px);
+    padding: 0 16px;
+    margin-top: 60px;
+  }
+
+  .hero-title {
+    font-size: 32px;
+    line-height: 38px;
+    margin-bottom: 18px;
+  }
+
+  .hero-subtitle {
+    font-size: 16px;
+    line-height: 24px;
+    margin: 24px auto 0;
+    max-width: 100%;
+    padding: 0 4px;
+  }
+
+  .hero-search {
+    width: 100%;
+    padding: 0;
+  }
+
+  .below-content {
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px 48px;
+    width: 100%;
+    height: auto;
+    gap: 24px;
+  }
+
+  .below-content-image {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+  }
+
+  .author-Title {
+    width: auto;
+    font-size: 28px;
+    line-height: 34px;
+    text-align: center;
+    margin: 0;
+  }
+
+  .author-Description {
+    font-size: 16px;
+    margin: 16px 0 0;
+    text-align: center;
+    max-width: 100%;
+  }
+}
